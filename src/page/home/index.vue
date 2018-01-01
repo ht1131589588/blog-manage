@@ -1,38 +1,11 @@
 <template>
   <div>
-    <el-row :gutter="10">
-      <el-col :xs="24" :sm="24">
-        <dl class="dxy-dl dxy-dl-horizon">
-          <dt>当日数据：</dt>
-          <dd>
-            <ul class="dxy-ul dxy-ul-horizon data-line">
-              <li><span>新增用户</span></li>
-              <li><span>新增管理员</span></li>
-              <li><span>新增文章</span></li>
-            </ul>
-          </dd>
-          <dt>总数据：</dt>
-          <dd>
-            <ul class="dxy-ul dxy-ul-horizon  data-line">
-              <li><span>用户</span></li>
-              <li><span>管理员</span></li>
-              <li><span>文章</span></li>
-            </ul>
-          </dd>
-        </dl>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-        <main-chat :x-datas="chatDatas"></main-chat>
-      </el-col>
-    </el-row>
+    首页
   </div>
   
 </template>
 
 <script>
-import mainChat from '@/components/chart';
 export default {
   data () {
     return {
@@ -45,7 +18,6 @@ export default {
     }
   },
   components:{
-    mainChat
   },
   methods: {
     

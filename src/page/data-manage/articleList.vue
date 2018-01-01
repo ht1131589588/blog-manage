@@ -23,6 +23,7 @@
         style="width: 100%;">
         <el-table-column
           type="index"
+          label="序号"
           width="auto">
         </el-table-column>
         <el-table-column
@@ -36,27 +37,14 @@
           width="auto">
         </el-table-column>
         <el-table-column
-          label="作者"
-          width="auto">
-          <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top">
-              <p>姓名: {{ scope.row.author.name }}</p>
-              <p>住址: {{ scope.row.author.address }}</p>
-              <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.author.name }}</el-tag>
-              </div>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="标签"
           width="auto">
           <template slot-scope="scope">
-            <el-tag type="success" v-for="item in scope.row.classify">{{item}}</el-tag>
+            <el-tag type="success" v-for="item in scope.row.classifys">{{item}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
-          prop="date"
+          prop="createdAt"
           label="发布日期">
         </el-table-column>
         <el-table-column
@@ -66,6 +54,7 @@
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
             <el-button type="text" size="small">编辑</el-button>
+            <el-button type="text" size="small" @click="handleDelete(scope.$index,scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -74,52 +63,19 @@
 </template>
 
 <script>
-
+import {getArticleLists, deleteArticle, modifyArticle} from '@/api/data'
 export default {
   data () {
     return {
-      tableData: [{
-        id: '10001',
-        title: 'vue双向数据绑定原理',
-        author:{
-          name:'张大仙',
-          address:'天上人间'
-        },
-        classify:['前端','vue.js','node'],
-        date: '2017-11-8'
-      }, {
-        id: '10002',
-        title: 'vue组件封装',
-        author:{
-          name:'张小仙',
-          address:'武汉魔山'
-        },
-        classify:['前端','vue.js','node'],
-        date: '2017-11-8'
-      }, {
-        id: '10003',
-        title: '前端攻城狮，我们来聊一聊',
-        author:{
-          name:'一片云彩',
-          address:'重庆歌乐山'
-        },
-        classify:['前端','vue.js','node'],
-        date: '2017-11-8'
-      }, {
-        id: '10004',
-        title: '前段性能优化',
-        author:{
-          name:'王者小浪浪',
-          address:'王者峡谷'
-        },
-        classify:['前端','vue.js','node'],
-        date: '2017-11-8'
-      }],
+      tableData: [],
       formInline: {
         title: '',
         classify: ''
       }
     }
+  },
+  created(){
+    this.initData();
   },
   methods: {
     handleClick(row) {
@@ -127,6 +83,35 @@ export default {
     },
     onSubmit() {
       console.log('submit!');
+    },
+    async initData(){
+      const res = await getArticleLists();
+      if(res.status==1){
+        var datas = JSON.parse(JSON.stringify(res.data));
+        datas.map(function(item,all){
+          if(item.classifys){
+            item.classifys = item.classifys.split(',');
+          }else{
+            item.classifys = ['前端','vue.js','node'];
+          }
+          item.createdAt = new Date(item.createdAt).toLocaleString();
+          item.updatedAt = new Date(item.updatedAt).toLocaleString();
+          return item;
+        })
+        this.tableData = datas;
+      }
+      
+    },
+    async handleDelete(index,id){
+      console.log(id);
+      const res = await deleteArticle({id});
+      if(res.status==1){
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        });
+        this.tableData.splice(index, 1);
+      }
     }
   },
   components:{
